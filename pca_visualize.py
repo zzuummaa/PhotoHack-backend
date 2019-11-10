@@ -2,7 +2,6 @@ import json
 
 import numpy as np
 from gensim import corpora
-from sklearn.preprocessing import MultiLabelBinarizer
 
 print(__doc__)
 
@@ -27,9 +26,9 @@ for sentence in sentences:
         if word in mydict:
             j = mydict[word]
             X[i][j] = X[i][j] + 1
-    i = i + 1;
+    i = i + 1
 
-target_names = y
+target_names = ["Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"]
 
 pca = PCA(n_components=2)
 X_r = pca.fit(X).transform(X)
@@ -42,17 +41,17 @@ print('explained variance ratio (first two components): %s'
       % str(pca.explained_variance_ratio_))
 
 plt.figure()
-colors = ['navy', 'turquoise', 'darkorange']
+colors = ['navy', 'turquoise', 'darkorange', 'brown', 'green', "black"]
 lw = 2
 
-for color, i, target_name in zip(colors, [3, 4, 5, 7], target_names):
+for color, i, target_name in zip(colors, [3, 4, 5, 7, 9, 10], target_names):
     plt.scatter(X_r[y == i, 0], X_r[y == i, 1], color=color, alpha=.8, lw=lw,
                 label=target_name)
 plt.legend(loc='best', shadow=False, scatterpoints=1)
 plt.title('PCA of IRIS dataset')
 
 plt.figure()
-for color, i, target_name in zip(colors, [3, 4, 5, 7], target_names):
+for color, i, target_name in zip(colors, [3, 4, 5, 7, 9, 10], target_names):
     plt.scatter(X_r2[y == i, 0], X_r2[y == i, 1], alpha=.8, color=color,
                 label=target_name)
 plt.legend(loc='best', shadow=False, scatterpoints=1)
