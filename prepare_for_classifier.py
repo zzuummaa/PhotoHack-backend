@@ -1,45 +1,43 @@
-import gensim
-import string
+import json
 from gensim import corpora, models
 from gensim.utils import simple_preprocess
-from nltk.stem.snowball import SnowballStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-import json
+from nlp_tools import prepare_sentence, stemmer
 
 trainingSet = json.load(open("trainingSet.json", encoding='utf-8', newline=''))
 
 messages = list()
 targets = list()
+dictMessages = list()
+dictTargets = list()
 for example in trainingSet:
+    dictMessages.append(example["text"])
+    dictTargets.append(example["target"])
     if len(example["target"]) > 0:
         messages.append(example["text"])
         targets.append(example["target"])
 
-stop_words = stopwords.words('russian')
-stemmer = SnowballStemmer("russian")
 
-# Tokenizing, remove punctuation, stemming
-sentences = list()
-for message in messages:
-    tokens = word_tokenize(message)
-    tokens = [i for i in tokens if (i not in string.punctuation)]
+def prepare_mesages(messages, fileName):
+    # Tokenizing, remove punctuation, stemming
+    sentences = list()
+    for message in messages:
+        tokens = prepare_sentence(message)
+        if len(tokens) > 0:
+            sentence = ""
+            for token in tokens:
+                sentence = sentence + " " + stemmer.stem(token)
 
-    tokens = [i for i in tokens if (i not in stop_words)]
+            sentences.append(sentence)
 
-    digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    tokens = [i for i in tokens if i]
+    trainingPairs = list(zip(sentences, targets))
+    with open(fileName, 'w', encoding='utf-8') as f:
+        json.dump(trainingPairs, f, ensure_ascii=False)
 
-    if len(tokens) > 0:
-        sentence = ""
-        for token in tokens:
-            sentence = sentence + " " + stemmer.stem(token)
+    return sentences
 
-        sentences.append(sentence)
 
-trainingPairs = list(zip(sentences, targets))
-with open("trainingPairs.json", 'w', encoding='utf-8') as f:
-    json.dump(trainingPairs, f, ensure_ascii=False)
+sentences = prepare_mesages(messages, "trainingPairs.json")
+dictSentences = prepare_mesages(dictMessages, "dictPairs.json")
 
 # Create the Dictionary and Corpus
 mydict = corpora.Dictionary([simple_preprocess(line) for line in sentences])

@@ -3,6 +3,8 @@ import json
 import numpy as np
 from gensim import corpora
 
+from nlp_tools import target_names
+
 print(__doc__)
 
 import matplotlib.pyplot as plt
@@ -27,8 +29,6 @@ for sentence in sentences:
             j = mydict[word]
             X[i][j] = X[i][j] + 1
     i = i + 1
-
-target_names = ["Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"]
 
 pca = PCA(n_components=2)
 X_r = pca.fit(X).transform(X)

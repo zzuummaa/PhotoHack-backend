@@ -1,33 +1,16 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-# TensorFlow и tf.keras
-import json
-
 import numpy as np
-import tensorflow as tf
-from gensim import corpora
 from tensorflow import keras
 
-mydict = corpora.Dictionary.load('../one-hot_encoding.dict')
-mydict = mydict.token2id
-jsonData = json.load(open("../trainingPairs.json", encoding='utf-8', newline=''))
-sentences = [i[0] for i in jsonData]
-target = [i[1][0] for i in jsonData]
+import nlp_tools
 
-y = np.array(target)
+# TensorFlow и tf.keras
 
-X = np.zeros((len(sentences), len(mydict)))
-i = 0
-for sentence in sentences:
-    words = sentence.split()
-    for word in words:
-        if word in mydict:
-            j = mydict[word]
-            X[i][j] = X[i][j] + 1
-    i = i + 1
+X, y = nlp_tools.load_training_set()
 
 model = keras.Sequential([
-    keras.layers.Dense(len(mydict), activation='relu'),
+    keras.layers.Dense(len(nlp_tools.mydict.token2id), activation='relu'),
     keras.layers.Dense(11, activation='softmax')
 ])
 
@@ -38,4 +21,6 @@ model.compile(optimizer='adam',
 target_names = np.asarray(["Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"])
 
 # train_labels = np.asarray(label)
-model.fit(X, y, epochs=10)
+model.fit(X, y, epochs=20)
+model.save('my_model.h5')
+print("Model saved to my_model.h5")
