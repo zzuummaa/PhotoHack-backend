@@ -1,5 +1,6 @@
 import json
 
+import sys
 import string
 import numpy as np
 from gensim import corpora
@@ -8,9 +9,13 @@ from nltk.corpus import stopwords
 
 print(__doc__)
 
-mydict = corpora.Dictionary.load('one-hot_encoding.dict')
-
-jsonData = json.load(open("trainingPairs.json", encoding='utf-8', newline=''))
+try:
+    fileName = 'one-hot_encoding.dict'
+    mydict = corpora.Dictionary.load(fileName)
+    fileName = "trainingPairs.json"
+    jsonData = json.load(open(fileName, encoding='utf-8', newline=''))
+except FileNotFoundError:
+    sys.stderr.write("Warn: file " + fileName + " not found")
 
 stop_words = stopwords.words('russian')
 stemmer = SnowballStemmer("russian")
