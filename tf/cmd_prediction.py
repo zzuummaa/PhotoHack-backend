@@ -4,7 +4,7 @@ from nlp_tools import prepare_sentence, extract_fitures, target_names
 
 model = load_model('my_model.h5')
 
-sentence = "Сегодня сижу дома"
+sentence = "сижу на работе"
 prepared = prepare_sentence(sentence)
 features = extract_fitures(prepared)
 featuresArr = np.asarray([features])

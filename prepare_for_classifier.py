@@ -52,3 +52,4 @@ tfidf = models.TfidfModel(corpus, smartirs='ntc')
 #     print([[mydict[id], np.around(freq, decimals=2)] for id, freq in doc])
 
 mydict.save("one-hot_encoding.dict")
+print("one-hot_encoding.dict saved")

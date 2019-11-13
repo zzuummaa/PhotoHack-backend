@@ -3,7 +3,7 @@ import json
 import numpy as np
 from gensim import corpora
 
-from nlp_tools import target_names
+from nlp_tools import target_names, target_ids
 
 print(__doc__)
 
@@ -44,14 +44,14 @@ plt.figure()
 colors = ['navy', 'turquoise', 'darkorange', 'brown', 'green', "black"]
 lw = 2
 
-for color, i, target_name in zip(colors, [3, 4, 5, 7, 9, 10], target_names):
+for color, i, target_name in zip(colors, target_ids, target_names):
     plt.scatter(X_r[y == i, 0], X_r[y == i, 1], color=color, alpha=.8, lw=lw,
                 label=target_name)
 plt.legend(loc='best', shadow=False, scatterpoints=1)
 plt.title('PCA of messages dataset')
 
 plt.figure()
-for color, i, target_name in zip(colors, [3, 4, 5, 7, 9, 10], target_names):
+for color, i, target_name in zip(colors, target_ids, target_names):
     plt.scatter(X_r2[y == i, 0], X_r2[y == i, 1], alpha=.8, color=color,
                 label=target_name)
 plt.legend(loc='best', shadow=False, scatterpoints=1)
