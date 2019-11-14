@@ -24,6 +24,7 @@ template_ids = [1001996, 1001997, 0, 0, 0, 0]
 target_ids = [3, 4, 5, 7, 9, 10]
 target_names = ["Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"]
 
+
 def prepare_sentence(sentence):
     tokens = word_tokenize(sentence.lower())
     tokens = [i for i in tokens if (i not in string.punctuation)]

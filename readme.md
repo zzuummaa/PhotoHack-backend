@@ -5,6 +5,8 @@
 ## 13.11.19
 
 [Cайт с русским корпусом для word2vec](https://rusvectores.org/en/models/)
+
 [gensim POS tags](https://universaldependencies.org/u/pos/all.html)
+
 [Use nltk universal POS tagging](https://stackoverflow.com/a/26980638/7595755)
 
