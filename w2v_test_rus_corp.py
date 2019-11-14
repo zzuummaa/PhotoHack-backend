@@ -38,7 +38,6 @@ def w2v_get_vec(sentence):
     textTag = pos_tag(preprocess_text(sentence), tagset='universal')
     if len(textTag) == 0:
         return np.asarray([0] * model.vector_size)
-    tagged = [t[0] + "_" + t[1] for t in textTag]
     word_vecs = []
     for i in textTag:
         t = i[0] + "_" + i[1]

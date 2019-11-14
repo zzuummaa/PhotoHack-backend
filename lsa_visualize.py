@@ -1,4 +1,5 @@
 import math
+import time
 
 import matplotlib
 import matplotlib.patches as mpatches
@@ -18,10 +19,15 @@ y = np.asarray(target)
 # X = np.zeros((len(sentences), len(mydict)))
 # i = 0
 X = np.zeros((len(sentences), model.vector_size))
+last_time = time.time()
 for i in range(len(sentences)):
     X[i] = w2v_get_vec(sentences[i])
+
     if i % math.trunc(len(sentences) / 20) == 0:
-        print(str(i) + "/" + str(len(sentences)))
+        cur_time = time.time()
+        speed = math.trunc(len(sentences) / 20) / (cur_time - last_time)
+        last_time = cur_time
+        print(str(i) + "/" + str(len(sentences)) + " " + ("%.2f" % round(speed,2)) + " op/sec")
 
 # for sentence in sentences:
 #     words = sentence.split()
