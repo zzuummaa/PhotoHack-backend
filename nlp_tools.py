@@ -65,3 +65,8 @@ def load_training_set():
     return X, y
 
 
+def load_training_pairs(filename):
+    jsonData = json.load(open(filename, encoding='utf-8', newline=''))
+    sentences = [i[0] for i in jsonData]
+    target = [i[1][0] for i in jsonData]
+    return sentences, target

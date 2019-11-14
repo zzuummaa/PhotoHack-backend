@@ -35,7 +35,9 @@ lemmatizer = WordNetLemmatizer()
 
 
 def w2v_get_vec(sentence):
-    textTag = pos_tag(preprocess_text("кратко краток краткий"), tagset='universal')
+    textTag = pos_tag(preprocess_text(sentence), tagset='universal')
+    if len(textTag) == 0:
+        return np.asarray([0] * model.vector_size)
     tagged = [t[0] + "_" + t[1] for t in textTag]
     word_vecs = []
     for i in textTag:
@@ -52,7 +54,7 @@ def w2v_get_vec(sentence):
                 word_vecs.append(np.asarray([0] * model.vector_size))
                 # print(i[0] + " not found")
 
-    return sum(word_vecs)
+    return sum(word_vecs) / len(textTag)
 
     # text = preprocess_text("кратко краток краткий")
 # textTag = pos_tag(preprocess_text("кратко краток краткий"), tagset='universal')
