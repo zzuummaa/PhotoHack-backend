@@ -8,6 +8,9 @@ for example in trainingSet:
     if len(example["target"]) > 0:
         messages.append(example["text"])
         targets.append(example["target"])
+    else:
+        messages.append(example["text"])
+        targets.append([0])
 
 
 trainingPairs = list(zip(messages, targets))

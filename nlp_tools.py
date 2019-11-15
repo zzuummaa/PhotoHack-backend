@@ -20,9 +20,9 @@ except FileNotFoundError:
 stop_words = stopwords.words('russian')
 stemmer = SnowballStemmer("russian")
 
-template_ids = [1001996, 1001997, 0, 0, 0, 0]
-target_ids = [3, 4, 5, 7, 9, 10]
-target_names = ["Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"]
+template_ids = [0, 1001996, 1001997, 0, 0, 0, 0]
+target_ids = [0, 3, 4, 5, 7, 9, 10]
+target_names = ["Хз", "Отпуск", "Работа", "Проект, планировани", "Работа с компьютером", "Ура", "Нет"]
 
 
 def prepare_sentence(sentence):
@@ -35,6 +35,7 @@ def prepare_sentence(sentence):
     tokens = [i for i in tokens if not i in digits]
 
     return tokens
+
 
 def extract_fitures(words):
     fitures = np.asarray([0] * len(mydict))

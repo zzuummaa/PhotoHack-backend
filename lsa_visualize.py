@@ -1,83 +1,32 @@
-import math
-import time
+import json
 
 import matplotlib
 import matplotlib.patches as mpatches
-import numpy as np
 from sklearn.decomposition import TruncatedSVD
-
-from nlp_tools import target_names, load_training_pairs
-from w2v_test_rus_corp import w2v_get_vec, model
-
-print(__doc__)
-
+from nlp_tools import target_names
 import matplotlib.pyplot as plt
+import numpy as np
 
-sentences, target = load_training_pairs("trainingPairs.json")
-y = np.asarray(target)
+colors = ['navy', 'red', 'turquoise', 'darkorange', 'brown', 'green', "black"]
 
-# X = np.zeros((len(sentences), len(mydict)))
-# i = 0
-X = np.zeros((len(sentences), model.vector_size))
-last_time = time.time()
-for i in range(len(sentences)):
-    X[i] = w2v_get_vec(sentences[i])
+data = json.load(open("w2vVectors.json", encoding='utf-8', newline=''))
+data = list(zip(*data))
+sentences = data[0]
+X = np.asarray(data[1])
+y = np.asarray(data[2])
 
-    if i % math.trunc(len(sentences) / 20) == 0:
-        cur_time = time.time()
-        speed = math.trunc(len(sentences) / 20) / (cur_time - last_time)
-        last_time = cur_time
-        print(str(i) + "/" + str(len(sentences)) + " " + ("%.2f" % round(speed,2)) + " op/sec")
-
-# for sentence in sentences:
-#     words = sentence.split()
-#     for word in words:
-#         if word in mydict:
-#             j = mydict[word]
-#             X[i][j] = X[i][j] + 1
-#     i = i + 1
-
-# pca = PCA(n_components=2)
-# X_r = pca.fit(X).transform(X)
-#
-# lda = LinearDiscriminantAnalysis(n_components=2)
-# X_r2 = lda.fit(X, y).transform(X)
-#
-# # Percentage of variance explained for each components
-# print('explained variance ratio (first two components): %s'
-#       % str(pca.explained_variance_ratio_))
-#
-# plt.figure()
-colors = ['navy', 'turquoise', 'darkorange', 'brown', 'green', "black"]
-# lw = 2
-#
-# for color, i, target_name in zip(colors, target_ids, target_names):
-#     plt.scatter(X_r[y == i, 0], X_r[y == i, 1], color=color, alpha=.8, lw=lw,
-#                 label=target_name)
-# plt.legend(loc='best', shadow=False, scatterpoints=1)
-# plt.title('PCA of messages dataset')
-#
-# plt.figure()
-# for color, i, target_name in zip(colors, target_ids, target_names):
-#     plt.scatter(X_r2[y == i, 0], X_r2[y == i, 1], alpha=.8, color=color,
-#                 label=target_name)
-# plt.legend(loc='best', shadow=False, scatterpoints=1)
-# plt.title('LDA of messages dataset')
-#
-# plt.show()
-
-
-def plot_LSA(test_data, test_labels, savepath="PCA_demo.csv", plot=True):
+def plot_LSA(test_data, test_labels, plot=True):
     lsa = TruncatedSVD(n_components=2)
     lsa.fit(test_data)
     lsa_scores = lsa.transform(test_data)
-    color_mapper = {label: idx for idx, label in enumerate(set(test_labels))}
-    color_column = [color_mapper[label] for label in test_labels]
     if plot:
-        plt.scatter(lsa_scores[:, 0], lsa_scores[:, 1], s=4, alpha=.8, c=test_labels,
+        plt.figure(dpi=300)
+        plt.scatter(lsa_scores[:, 0], lsa_scores[:, 1], s=1, alpha=.8, c=test_labels,
                     cmap=matplotlib.colors.ListedColormap(colors))
         patches = [mpatches.Patch(color=colors[i], label=target_names[i]) for i in range(len(colors))]
-        plt.legend(handles=patches, prop={'size': 10})
+        plt.legend(handles=patches, prop={'size': 6})
     plt.show()
+    return lsa_scores
 
-plot_LSA(X, y)
+
+lsa_scores = plot_LSA(X, y)

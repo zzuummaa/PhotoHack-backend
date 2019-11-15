@@ -1,24 +1,29 @@
-import re
-from string import punctuation
+import json
+import time
 
 import numpy as np
+import spacy
 from gensim.models import KeyedVectors
-from nltk import pos_tag, word_tokenize, WordNetLemmatizer
+from nltk import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.corpus.reader import wordnet
-from pymystem3 import Mystem
 
-mystem = Mystem()
+from nlp_tools import load_training_pairs
+
+nlp = spacy.load('ru2', disable=['parser', 'NER'])
+nlp.add_pipe(nlp.create_pipe('sentencizer'), first=True)
+
 russian_stopwords = stopwords.words("russian")
 
 
 def preprocess_text(text):
-    tokens = mystem.lemmatize(text.lower())
-    tokens = [token for token in tokens if token not in russian_stopwords \
-              and token != " " \
-              and token.strip() not in punctuation]
+    doc = nlp(text)
+    lemma = []
+    for s in doc.sents:
+        for t in s:
+            lemma.append((t.lemma_, t.pos_))
 
-    return tokens
+    return lemma
 
 
 def find_words(word):
@@ -35,7 +40,7 @@ lemmatizer = WordNetLemmatizer()
 
 
 def w2v_get_vec(sentence):
-    textTag = pos_tag(preprocess_text(sentence), tagset='universal')
+    textTag = preprocess_text(sentence)
     if len(textTag) == 0:
         return np.asarray([0] * model.vector_size)
     word_vecs = []
@@ -56,6 +61,8 @@ def w2v_get_vec(sentence):
     return sum(word_vecs) / len(textTag)
 
     # text = preprocess_text("кратко краток краткий")
+
+
 # textTag = pos_tag(preprocess_text("кратко краток краткий"), tagset='universal')
 # tagged = [t[0] + "_" + t[1] for t in textTag]
 # print(tagged)
@@ -65,3 +72,27 @@ def w2v_get_vec(sentence):
 
 
 # print(model[u'пожар_NOUN'])
+
+if __name__ == '__main__':
+    sentences, target = load_training_pairs("trainingPairs.json")
+    y = np.asarray(target)
+
+    # X = np.zeros((len(sentences), len(mydict)))
+    # i = 0
+    X = np.zeros((len(sentences), model.vector_size))
+    last_time = time.time()
+    last_i = 0
+    for i in range(len(sentences)):
+        X[i] = w2v_get_vec(sentences[i])
+
+        if time.time() - last_time > 3:
+            cur_time = time.time()
+            speed = (i - last_i) / (cur_time - last_time)
+            last_i = i
+            last_time = cur_time
+            print(str(i) + "/" + str(len(sentences)) + " " + ("%.2f" % round(speed, 2)) + " op/sec")
+
+    print(str(len(sentences)) + "/" + str(len(sentences)) + " - completed")
+
+    with open("w2vVectors.json", 'w', encoding='utf-8') as f:
+        json.dump(list(zip(sentences, X.tolist(), target)), f, ensure_ascii=False)
